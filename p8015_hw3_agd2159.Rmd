@@ -2,7 +2,46 @@
 title: "P8015_Hw3_agd2159"
 output: github_document
 author: "Zander De Jesus"
-date: "10-04-2023"
+date: "10-14-2023"
 ---
+# Problem 1: Instacart Grocery Large-Scale Data Analysis and Plotting
+
+Begin by loading important libraries and beginning to look at full dataset. 
+
+```{r}
+library(tidyverse)
+library(ggridges)
+library(patchwork)
+library(p8105.datasets)
 
 
+data("instacart")
+
+summary(instacart)
+
+nrow(instacart)
+ncol(instacart)
+
+```
+
+
+
+**Question: 1 - How many aisles are there, and which aisles are the most items ordered from?**
+
+```{r}
+
+num = instacart |> 
+  distinct(aisle_id) |> 
+  max()
+
+aisles_df = instacart |> 
+  janitor::clean_names() |> 
+  group_by(aisle) |> 
+  summarize(n_obs = n()) |> 
+  arrange(desc(n_obs))
+
+aisles_df
+
+```
+
+After creating a separate grouped tibble based on aisle name and the bulk total of orders from each aisle, we can see that the the top 3 aisles with the highest amount of items ordered are **Fresh Vegetables, Fresh Fruits, and Packaged Vegetables / Fruits.** These are then followed by Yogurt and Packaged Cheese in the dairy department. 
