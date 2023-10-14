@@ -186,10 +186,16 @@ compare_excellent
 
 ```
 
+The cleaned dataframe `compare_excellent` is grouping by year and state, in order to average the excellent health response across all county locations of each state every year of the survey. 
+
+The "Spaghetti" Plot below has lines for all 50 states in the survey from the colleciton range of 2002 - 2010. It contains `r nrow(compare_excellent)` from the `r ncol(compare_excellent)` columns of interest from the cleaned BRFSS dataset.
+
 ```{r}
 #Creating Spaghetti Plot
 compare_excellent |> 
-  ggplot(aes(x = year, y = mean_excellent, group = state)) + geom_smooth(se = FALSE, alpha = .2)  +
+  ggplot(aes(x = year, y = mean_excellent)) + 
+           geom_line(alpha = 0.4, aes(group = state)) +
+           geom_smooth() +
   labs(
     title = "Average Excellent Overall Health Response across all 50 States",
     x = "Year of Survey",
@@ -197,25 +203,10 @@ compare_excellent |>
   )
   
 ```
+The majority of states are within the range of 27% - 20% across the period. No state passes 30% excellent health, and the states at the lower extremities appears to be below 20%, with only 3 states crossing below 15% at any point in this study.
 
-
-```{r}
-new_spaghetti = compare_excellent |> 
-  ggplot(aes(x = year, y = mean_excellent)) + 
-           geom_line(alpha = 0.4, aes(group = state)) +
-           geom_smooth(se = FALSE) +
-  labs(
-    title = "Average Excellent Overall Health Response across all 50 States",
-    x = "Year of Survey",
-    y = "Avg. Excellent Response Percentage"
-  )
-
-new_spaghetti
-```
-
-The cleaned dataframe `compare_excellent` is grouping by year and state, in order to average the excellent health response across all county locations of each state every year of the survey. This "Spaghetti" Plot has smoothed lines for all 50 states in the survey from the colleciton range of 2002 - 2010. It contains `r nrow(compare_excellent)` from the `r ncol(compare_excellent)` columns of interest from the cleaned BRFSS dataset.
-
-The majority of states are within the range of 27% - 20% across the period. No state passes 30% excellent health, and the states at the lower extremities appears to be below 20%, with only 3 states crossing below 15% at any point in this study. Looking at intra-state variation, there does seem to be a slight decline in excellent health response from 2002 through 2010 across states, this may result from large-scale social events such as the 2008 financial crisis. 
+Looking at intra-state variation, there does seem to be a slight decline in excellent health response from 2002 through 2010 across most states, this may result from large-scale social events such as the 2008 financial crisis. 
+`geom_smooth()` is used alongside `geom_line()` to get a blue general trendline of overall average excellent response percentage across all states in this timeframe. From this curve, we see an overall average of about 23.5% excellent in 2002, which falls down to about 21.5% excellent by 2005 and plateaus there, reaching about 21% in 2010. 
 
 When arranging the dataframe to see the min and max of excellent responses, the lowest outlier state is the state of West Virginia, which only had a excellent health response of only **11.5 percent in the year 2005.** West Virginia is the most consistent low band in the Spaghetti Plot, followed by Indiana as second lowest. 
 
