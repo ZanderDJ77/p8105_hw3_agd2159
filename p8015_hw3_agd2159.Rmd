@@ -359,7 +359,7 @@ total_activity |>
   facet_grid(. ~ education)
 ```
 
-This scatterplot visualizaiton identifies the distribution of total MIMS activity from each participants accelerometer recordings, organized across participant age group, education level, and sex. 
+This scatterplot visualization identifies the distribution of total MIMS activity from each participants accelerometer recordings, organized across participant age group, education level, and sex. 
 
 `geom_smooth()` was used to produce trendlines across age groups for both sex cohorts. Across all three education statuses, there is a general decrease in recorded total activity as age increases. There is a higher overall range of activity in the 'less than high school' education cohort, with young women in their 20 -  30s having MIMS data around or above 20000. 
 
@@ -388,7 +388,17 @@ activity_time |>
 
 ```
 
-This supplemental graph isolates the average trendline below for male and female participants:
+This three panel faceted plot distributes all MIMs values recorded every minute on 24 hour accelerometers, and plots individual lines for all 228 participants using `group_by()` function on SEQN ID. Participants are separated by education status cohort, and sorted by sex to give two average trendlines for activity per plot panel for male and female data trends. Because the bulk data has 1440 MIMS values across every minute of the day, the busy lines in the back were reduced to a low alpha value of 0.5, increasing their opacity to focus on the average curve line while still seeing the full distribution of points.
+
+First, there are general patterns in activity that are mirrored across all three cohorts. There are increases in activity around 500 minutes, which translates to about 8:30 am, and coincides with participants starting their workdays. Activity is consistent between on average 13 and 12 mims values through most of the workday until returning home in the evening. Activity then tanks to an average of 4 or below as participants begin to sleep. 
+
+Looking at comparative trends between gender, it appears from the average MIMS trendlines produced by `geom_smooth()` that women have slightly higher average activity throughout most of the afternoon, suggesting slightly more movement in their daily occupation than males. This difference between sex is most noticeable between females and males in the more than high school educational cohort, where female participants had on average 14 mim value throughout the afternoon while male participants had between 13 and 11 MIMs activity average. 
+The Less Than Highschool educational cohort had the most active morning commutes on average - with female participants having 15 avg. MIMS value and 14 avg. MIMS for male participants. This could indicate a greater amount of these participants are potentially walking or cycling to work. 
+
+Looking at the full distribution plotted by the line graphs, there are also significant outliers in the increased activity of the more than high school cohort.  For this high education cohort there is a spike in activity distributions for both male and female particpants in the morning between 500 and 700 minutes (about 8:30 - 10:30 am) where MIMS activity values are ranging from 50 - 75, and an even larger spike that is primarily male dominated in the evening around 1200 minutes (about 7 - 9 pm) where some participants are registering over 70 - 100 MIMS activity. These very high MIM periods imply intense physical activity, and could suggest morning and evening exercise / leisure sports that are concentrated before and after the workday.These panel organization of participants indicate that participants with education higher than highschool exhibit the greatest compartmentalization of work activity and exercise / lesiure activity. 
+
+
+This supplemental graph below isolates the average trendline below for male and female participants, to allow greater resolution of the curves and appropriate unit scaling for the y-axis.
 
 ```{r}
 
