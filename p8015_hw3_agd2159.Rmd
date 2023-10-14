@@ -111,3 +111,42 @@ This final part of Problem 1 asks us to narrow the dataset down to just two proc
 
 
 # Problem 2: Behavioral Risk Factors Dataset Analysis
+Beginning by importing the dataset and doing initial steps to clean the tibble dataframe.
+### Task 1: Initial Data Cleaning
+```{r}
+data("brfss_smart2010")
+
+brfss_clean = brfss_smart2010 |> 
+  janitor::clean_names() |> 
+  select(everything(), -data_value_unit, -data_value_footnote, -data_value_footnote_symbol, -location_id) |> 
+  rename(state = locationabbr, county = locationdesc) |> 
+  filter(topic == "Overall Health")
+
+#Specific code to reorder response factor levels
+brfss_clean = brfss_clean |> 
+  mutate(response = as.factor(response)) |> 
+  mutate(response = ordered(response, c("Poor", "Fair", "Good", "Very good", "Excellent")))
+```
+The original dataset before cleaning has `r nrow(brfss_smart2010)` rows of content, indicating a different question category from each state location, and `r ncol(brfss_smart2010)` column variables. 3 of these columns were entirely empty with NA's and were removed in the tidy dataset `brfss_clean`. Also one column `data_value_unit` was only describing that the unit was in percentages, and was removed to avoid confusion in calculations. 
+
+For clarity, locationabbr and locationdesc were renamed to state and county respectively. After filtering only the Overall Health topic questions, and removign the extraneous columns identified above, this cleaned dataframe has `r nrow(brfss_clean)` rows and `r ncol(brfss_clean)` column variables.
+
+The `response` column was converted from character to factor format, with five levels ordered from Poor -> Excellent as requested. 
+
+```{r}
+
+test = brfss_clean |> 
+  pull(response)
+```
+
+### Task 2: Analyzing Specific Response Data by Years
+*Q: In 2002, which states were observed at 7 or more locations? What about in 2010?*
+To do this, we will make two filtered subdataframes for both 2002 and 2010, that make tables containing 7 or more county locations for each state. This will use the `group_by` function. 
+
+```{r}
+
+```
+
+
+
+
