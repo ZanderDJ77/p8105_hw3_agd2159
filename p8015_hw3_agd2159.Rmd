@@ -252,7 +252,16 @@ Begin by Importing and Cleaning the Two Separate CSVs for NHANES Demographics an
 ```{r}
 demographic = read_csv("Data/nhanes_covar.csv", skip = 4) |> 
   janitor::clean_names() |> 
-  drop_na()
+  drop_na() |> 
+   mutate(
+    sex = case_match(sex,
+      1 ~ "male",
+      2 ~ "female"),
+    education = case_match(education,
+      1 ~ "less than high school",
+      2 ~ "high school",
+      3 ~ "more than high school")) |> 
+  filter(age >= 21)
 
 accel_data = read_csv("Data/nhanes_accel.csv") |> 
   janitor::clean_names() |> 
@@ -260,4 +269,36 @@ accel_data = read_csv("Data/nhanes_accel.csv") |>
 
 ```
 
-Dropping NA's from the demographics sheet brings the observations down to `r nrows(demographic)` study participants with complete data. All data is complete in the accelerometer reporting datasheet, no NA's. SEQN ID will be used as key for joining.
+Dropping NA's from the demographics sheet brings the observations down to `r nrow(demographic)` study participants with complete data. Only 1 participant was excluded for being under 21 years of age. 
+
+All data is complete in the accelerometer reporting datasheet, no NA's. SEQN ID will be used as key for joining.
+
+```{r Transforming Data for Joining}
+
+#Making Sex and Education Factors with Ordered Levels 
+demographic = demographic |> 
+  mutate(sex = as.factor(sex), education = as.factor(education)) |> 
+  mutate(sex = ordered(sex, c("male", "female")), 
+         education = ordered(education,
+            c("less than high school", "high school", "more than high school")))
+
+#Organizing Accel_data with Pivot_Longer
+accel_data = accel_data |> 
+  pivot_longer(
+    min1:min1440,
+    names_to = "minutes",
+    names_prefix = "min",
+    values_to = "mims_value") |> 
+  mutate(minutes = as.numeric(minutes))
+
+```
+
+To prepare for visualization, each dataset is further tidied. The demographic covariates have their sex and education values changed from numerics to factors with ordered levels with rank, which will be used when plotting. Since the acceleromter has 1440 columns worth of mims readings each minute of a 24-hour day, a `pivot_longer` function was used to separate this into the minutes of time column and mims_values associated. 
+
+The SEQN ID will now be used for an inner join with the demographic covariate dataframe:
+
+```{r}
+nhanes_df = inner_join(accel_data, demographic, by = "seqn")
+
+```
+
