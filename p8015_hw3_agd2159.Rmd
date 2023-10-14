@@ -331,6 +331,46 @@ participant_ages |>
   scale_y_continuous(breaks = scales::pretty_breaks(n = 10))
 ```
 
-In this boxplot visualization, we can see that female high school educated participants have a noticeably higher age distribution than males that are high school educated, with a median of 62 years for female vs 53 for male. More than high school educated seems to have the youngest distribution of ages across men and women, with a male median of 43 and female median of 41. Meanwhile the less than high school cohort has a median male age of 60 and a median  female age of 61, an older cohort distribution across this educational status for both sexes.
+In this boxplot visualization, we can see that female high school educated participants have a noticeably higher age distribution than males that are high school educated, with a median of 62 years for female vs 53 for male. More than high school educated seems to have the youngest distribution of ages across men and women, with a male median of 43 and female median of 41. Meanwhile the less than high school cohort has a median male age of 60 and a median female age of 61, an older cohort distribution across this educational status for both sexes.
 
-### Task 4: 
+### Task 4: Accelerometer MIMS Plots 
+
+**Plot 1 Guidelines**
+
+*Aggregate across minutes to create a total activity variable for each participant. Plot these total activities (y-axis) against age (x-axis); your plot should compare men to women and have separate panels for each education level. Include a trend line or a smooth to illustrate differences. Comment on your plot.*
+
+```{r}
+total_activity = nhanes_df |> 
+  group_by(seqn) |> 
+  mutate(mims_activity = sum(mims_value))
+  
+total_activity |> 
+  ggplot(aes(x = age, y = mims_activity, color = sex)) +
+  geom_point() + 
+  geom_smooth(se = FALSE) + 
+  labs(
+    title = "NHANES Recorded MIMS Activity Across Participants, By Age and Education",
+    y = "Total MIMS Activity",
+    x = "Age in Years"
+  ) +
+  scale_x_continuous(breaks = scales::pretty_breaks()) +
+  scale_color_hue(h = c(150, 300)) +
+  facet_grid(. ~ education) 
+```
+
+This scatterplot visualizaiton identifies the distribution of total MIMS activity from each participants accelerometer recordings, organized across participant age group, education level, and sex. 
+
+`geom_smooth()` was used to produce trendlines across age groups for both sex cohorts. Across all three education statuses, there is a general decrease in recorded total activity as age increases. There is a higher overall range of activity in the 'less than high school' education cohort, with young women in their 20 -  30s having MIMS data around or above 20000. 
+
+Across all three cohorts, young women appear to have more recorded activity than young men. The more than high school educational category has high variation but the trendlines with the consistently lower average activity at a younger age than the other two education groups. This may be due to the stationary nature of most white collar office jobs that are common to higher educated professionals.
+
+
+**Plot 2 Guidelines** 
+
+*Make a three-panel plot that shows the 24-hour activity time courses for each education level and use color to indicate sex. Including smooth trends may help identify differences*
+
+```{r}
+
+
+```
+
