@@ -22,6 +22,7 @@ nrow(instacart)
 ncol(instacart)
 
 ```
+
 This is a large dataset that contains `r nrow(instacart)` rows of observations and `r ncol(instacart)` column variables. Each row is a specific instacart product - with associated department and aisle information. There are also categorical variables that describe the time and day of the order, and number of day since the previous order. 
 
 In total, there are `r instacart |> select(product_id) |> distinct() |> count()` products found in `r instacart |> select(user_id, order_id) |> distinct() |> count()` orders from `r instacart |> select(user_id) |> distinct() |> count()` distinct users.
@@ -354,8 +355,8 @@ total_activity |>
     x = "Age in Years"
   ) +
   scale_x_continuous(breaks = scales::pretty_breaks()) +
-  scale_color_hue(h = c(150, 300)) +
-  facet_grid(. ~ education) 
+  scale_color_hue(h = c(255, 8.5)) +
+  facet_grid(. ~ education)
 ```
 
 This scatterplot visualizaiton identifies the distribution of total MIMS activity from each participants accelerometer recordings, organized across participant age group, education level, and sex. 
@@ -370,7 +371,38 @@ Across all three cohorts, young women appear to have more recorded activity than
 *Make a three-panel plot that shows the 24-hour activity time courses for each education level and use color to indicate sex. Including smooth trends may help identify differences*
 
 ```{r}
+activity_time = nhanes_df |> 
+  group_by(seqn)
 
+activity_time |> 
+  ggplot(aes(x = minutes, y = mims_value, color = sex)) +
+  geom_line(alpha = 0.5) +
+  geom_smooth(se = FALSE) +
+  labs(
+    title = "NHANES 24-hour Activity Time by Education Level, Sex",
+    y = "Mims Activity Value",
+    x = "Time (Minutes)"
+  ) +
+  scale_color_hue(h = c(255, 8.5)) +
+  facet_grid(. ~ education) 
 
 ```
 
+This supplemental graph isolates the average trendline below for male and female participants:
+
+```{r}
+
+activity_trendlines = activity_time |> 
+  ggplot(aes(x = minutes, y = mims_value, color = sex)) +
+  geom_smooth(se = FALSE) +
+  labs(
+    title = "Average Trendlines for NHANES 24-hour Activity Times",
+    y = "Avg. Mims Activity",
+    x = "Time (Minutes)"
+  ) +
+  scale_color_hue(h = c(255, 8.5)) +
+  facet_grid(. ~ education) 
+
+activity_trendlines
+
+```
