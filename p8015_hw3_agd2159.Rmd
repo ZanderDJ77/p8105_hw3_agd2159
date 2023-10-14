@@ -58,6 +58,7 @@ aisles_df |>
   theme(axis.text.x = element_text(angle= 60, hjust = 1))
 
 ```
+
 This column graph visualizes the relative quantities of items ordered across each aisle, color-coded by associated department. Internal to each department, the aisles are organized from least in demeand to most in demand items.
 
 ### Task 3 - Identifying Most Popular Items in Specific Aisles**
@@ -203,6 +204,7 @@ compare_excellent |>
   )
   
 ```
+
 The majority of states are within the range of 27% - 20% across the period. No state passes 30% excellent health, and the states at the lower extremities appears to be below 20%, with only 3 states crossing below 15% at any point in this study.
 
 Looking at intra-state variation, there does seem to be a slight decline in excellent health response from 2002 through 2010 across most states, this may result from large-scale social events such as the 2008 financial crisis. 
@@ -223,7 +225,7 @@ ny_response = brfss_clean |>
 
 
 ny_response |> 
-  ggplot(aes(x= response, y = data_value)) + geom_boxplot() + 
+  ggplot(aes(x= response, y = data_value)) + geom_boxplot(aes(fill= response), show.legend=FALSE) + 
   labs(
     title = "Distribution of Health Responses across NY State, 2006 vs. 2010",
     x = "Overall Health Response",
@@ -264,6 +266,8 @@ Dropping NA's from the demographics sheet brings the observations down to `r nro
 
 All data is complete in the accelerometer reporting datasheet, no NA's. SEQN ID will be used as key for joining.
 
+### Task 1: Transforming Data and Completeing Table Join
+
 ```{r Transforming Data for Joining}
 
 #Making Sex and Education Factors with Ordered Levels 
@@ -293,3 +297,40 @@ nhanes_df = inner_join(accel_data, demographic, by = "seqn")
 
 ```
 
+This completed dataframe has a total of `r nrow(nhanes_df)` observations and `r ncol(nhanes_df)` variables of interest after the join by SEQN ID. 
+
+### Task 2: Total Demographic Counts Sex and Education Status
+
+The two factor level variables `sex` and `education` can be used to create a table of participant totals that is easy to read using the `group_by` function:
+
+```{r}
+participant_dist = demographic |> 
+  select(seqn, age, sex, education) |> 
+  group_by(sex, education) |> 
+  summarize(participants = n())
+
+participant_dist |> 
+  knitr::kable(digits = 2)
+
+```
+
+This is a reader-accessible table highlighting organizing NHANES study participants by sex and education status. In this cohort, the educational status **"more than high school"** is the most represented for both men and women, with 59  female and 56 male participants making up about half of the entire 226 participant cohort. Similarly the least represented is participants with less than a high school degree, with 27 men and 28 women. There is a slightly skewed higher ratio of male participants with high school education (35) over high school educated females (28). 
+
+```{r}
+participant_ages = demographic |> 
+  select(seqn, sex, age, education) |> 
+  group_by(sex)
+
+participant_ages |> 
+  ggplot(aes(x = education, y = age, fill = sex)) + geom_boxplot() +
+  labs(
+    title = "NHANES Participant Age Distribution across Sex and Education",
+    y = "Age in Years",
+    x = "Education Status"
+  ) +
+  scale_y_continuous(breaks = scales::pretty_breaks(n = 10))
+```
+
+In this boxplot visualization, we can see that female high school educated participants have a noticeably higher age distribution than males that are high school educated, with a median of 62 years for female vs 53 for male. More than high school educated seems to have the youngest distribution of ages across men and women, with a male median of 43 and female median of 41. Meanwhile the less than high school cohort has a median male age of 60 and a median  female age of 61, an older cohort distribution across this educational status for both sexes.
+
+### Task 4: 
