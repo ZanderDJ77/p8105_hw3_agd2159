@@ -189,7 +189,7 @@ compare_excellent
 ```{r}
 #Creating Spaghetti Plot
 compare_excellent |> 
-  ggplot(aes(x = year, y = mean_excellent, group = state)) + geom_smooth(se = FALSE, alpha = .2) +
+  ggplot(aes(x = year, y = mean_excellent, group = state)) + geom_smooth(se = FALSE, alpha = .2)  +
   labs(
     title = "Average Excellent Overall Health Response across all 50 States",
     x = "Year of Survey",
@@ -197,6 +197,22 @@ compare_excellent |>
   )
   
 ```
+
+
+```{r}
+new_spaghetti = compare_excellent |> 
+  ggplot(aes(x = year, y = mean_excellent)) + 
+           geom_line(alpha = 0.4, aes(group = state)) +
+           geom_smooth(se = FALSE) +
+  labs(
+    title = "Average Excellent Overall Health Response across all 50 States",
+    x = "Year of Survey",
+    y = "Avg. Excellent Response Percentage"
+  )
+
+new_spaghetti
+```
+
 The cleaned dataframe `compare_excellent` is grouping by year and state, in order to average the excellent health response across all county locations of each state every year of the survey. This "Spaghetti" Plot has smoothed lines for all 50 states in the survey from the colleciton range of 2002 - 2010. It contains `r nrow(compare_excellent)` from the `r ncol(compare_excellent)` columns of interest from the cleaned BRFSS dataset.
 
 The majority of states are within the range of 27% - 20% across the period. No state passes 30% excellent health, and the states at the lower extremities appears to be below 20%, with only 3 states crossing below 15% at any point in this study. Looking at intra-state variation, there does seem to be a slight decline in excellent health response from 2002 through 2010 across states, this may result from large-scale social events such as the 2008 financial crisis. 
@@ -231,4 +247,17 @@ The relative proportion of each of the 5 health response percentages are quite s
 
 # Problem 3: NHANES Accelerometer Data Analysis
 
+Begin by Importing and Cleaning the Two Separate CSVs for NHANES Demographics and Accelerometer information. The demographic covariate dataset has 4 lines of variable notes at the top of the spreadsheet and are removed when reading in the csv.
 
+```{r}
+demographic = read_csv("Data/nhanes_covar.csv", skip = 4) |> 
+  janitor::clean_names() |> 
+  drop_na()
+
+accel_data = read_csv("Data/nhanes_accel.csv") |> 
+  janitor::clean_names() |> 
+  drop_na()
+
+```
+
+Dropping NA's from the demographics sheet brings the observations down to `r nrows(demographic)` study participants with complete data. All data is complete in the accelerometer reporting datasheet, no NA's. SEQN ID will be used as key for joining.
